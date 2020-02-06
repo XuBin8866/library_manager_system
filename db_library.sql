@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 04/02/2020 20:13:13
+ Date: 06/02/2020 19:02:13
 */
 
 SET NAMES utf8mb4;
@@ -30,9 +30,11 @@ CREATE TABLE `tb_bookborrow`  (
   `operator` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `if_back` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_reader`(`reader_id`) USING BTREE,
-  INDEX `fk_book`(`book_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  INDEX `fk_book_id`(`book_id`) USING BTREE,
+  INDEX `fk_reader_id`(`reader_id`) USING BTREE,
+  CONSTRAINT `fk_book_id` FOREIGN KEY (`book_id`) REFERENCES `tb_bookinfo` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_reader_id` FOREIGN KEY (`reader_id`) REFERENCES `tb_reader` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookborrow
@@ -53,7 +55,7 @@ CREATE TABLE `tb_bookcase`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookcase
@@ -81,8 +83,14 @@ CREATE TABLE `tb_bookinfo`  (
   `operator` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `if_delete` tinyint(1) NULL DEFAULT 0,
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `fk_book_type_id`(`type_id`) USING BTREE,
+  INDEX `fk_isbn`(`ISBN`) USING BTREE,
+  INDEX `fk_bookcase_id`(`bookcase`) USING BTREE,
+  CONSTRAINT `fk_book_type_id` FOREIGN KEY (`type_id`) REFERENCES `tb_booktype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_isbn` FOREIGN KEY (`ISBN`) REFERENCES `tb_publishing` (`isbn`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_bookcase_id` FOREIGN KEY (`bookcase`) REFERENCES `tb_bookcase` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_bookinfo
@@ -99,11 +107,15 @@ INSERT INTO `tb_bookinfo` VALUES ('990823444', 'SpringMVC入门', 4, 'xxbb', 'rc
 DROP TABLE IF EXISTS `tb_bookreturn`;
 CREATE TABLE `tb_bookreturn`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `reader_id` int(11) NULL DEFAULT NULL,
-  `book_id` int(11) NULL DEFAULT NULL,
+  `reader_id` int(10) UNSIGNED NULL DEFAULT NULL,
+  `book_id` int(10) UNSIGNED NULL DEFAULT NULL,
   `return_time` date NULL DEFAULT NULL,
   `operator` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `fk_book_id_return`(`book_id`) USING BTREE,
+  INDEX `fk_reader_id_return`(`reader_id`) USING BTREE,
+  CONSTRAINT `fk_book_id_return` FOREIGN KEY (`book_id`) REFERENCES `tb_bookinfo` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_reader_id_return` FOREIGN KEY (`reader_id`) REFERENCES `tb_reader` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -164,7 +176,7 @@ CREATE TABLE `tb_manager`  (
   `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `password` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_manager
@@ -222,7 +234,7 @@ CREATE TABLE `tb_purview`  (
   `borrow_set` tinyint(1) NULL DEFAULT 1,
   `system_query` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_purview
@@ -253,9 +265,11 @@ CREATE TABLE `tb_reader`  (
   `create_date` date NULL DEFAULT NULL,
   `operator` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `type_id` int(11) NULL DEFAULT NULL,
+  `type_id` int(10) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`, `barcode`) USING BTREE,
-  INDEX `id`(`id`) USING BTREE
+  INDEX `id`(`id`) USING BTREE,
+  INDEX `fk_reader_type`(`type_id`) USING BTREE,
+  CONSTRAINT `fk_reader_type` FOREIGN KEY (`type_id`) REFERENCES `tb_readertype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -275,7 +289,7 @@ CREATE TABLE `tb_readertype`  (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `allow_borrow_amount` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_readertype
@@ -284,22 +298,6 @@ INSERT INTO `tb_readertype` VALUES (1, '管理员', 100);
 INSERT INTO `tb_readertype` VALUES (4, '学生', 5);
 INSERT INTO `tb_readertype` VALUES (12, '市民', 10);
 INSERT INTO `tb_readertype` VALUES (17, '员工', 20);
-
--- ----------------------------
--- Table structure for test
--- ----------------------------
-DROP TABLE IF EXISTS `test`;
-CREATE TABLE `test`  (
-  `id` int(4) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of test
--- ----------------------------
-INSERT INTO `test` VALUES (0001, 'xxbb');
-INSERT INTO `test` VALUES (0002, 'aabb');
 
 -- ----------------------------
 -- Triggers structure for table tb_manager
