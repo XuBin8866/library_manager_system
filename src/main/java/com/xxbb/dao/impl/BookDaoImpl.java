@@ -126,7 +126,7 @@ public class BookDaoImpl extends BaseDaoImpl implements BookDao{
 	}
 	/**
 	 * 
-	    * @Title: query  
+	    * @Title: 查询图书是否已经被借阅
 		* @Description: TODO(这里用一句话描述这个方法的作用)
 		* @param bf
 		* @return
@@ -138,13 +138,15 @@ public class BookDaoImpl extends BaseDaoImpl implements BookDao{
 		BookForm b=null;
 		List<BookForm> bfs=new ArrayList<BookForm>();
 		if(bf.getBookBarcode()!=null) {
-			sb.append("select * from tb_bookinfo where barcode=");
+			sb.append("select b.*,bb.* from tb_bookinfo b left join tb_bookborrow bb on bb.book_id=b.id where (bb.if_back=1 or bb.if_back is null ) and b.barcode='");
 			sb.append(bf.getBookBarcode());
+			sb.append("'");
 		}else if(bf.getBookName()!=null) {
-			sb.append("select * from tb_bookinfo where book_name=");
+			sb.append("select b.*,bb.* from tb_bookinfo b left join tb_bookborrow bb on bb.book_id=b.id where (bb.if_back=1 or bb.if_back is null ) and b.book_name='");
 			sb.append(bf.getBookName());
+			sb.append("'");
 		}
-		System.out.println(sb);
+		System.out.println("查询图书是否被借出："+sb);
 		try {
 			rs=executeQuery(sb.toString());
 			while(rs.next()) {
