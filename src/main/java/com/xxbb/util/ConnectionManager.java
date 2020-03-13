@@ -26,12 +26,14 @@ public final class ConnectionManager {
 	}
 	public static final ConnectionManager getInstance() {
 		if(instance==null) {
-			try {
-				instance=new ConnectionManager();
-			}catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-			}
+			synchronized (ConnectionManager.class) {
+				try {
+					instance=new ConnectionManager();
+				}catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}	
 		}
 		return instance;
 	}
