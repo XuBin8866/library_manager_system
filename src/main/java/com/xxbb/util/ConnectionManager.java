@@ -13,7 +13,9 @@ import java.sql.Connection;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public final class ConnectionManager {
-	//使用单例模式创建数据库连接池
+	/**
+	 * 使用单例模式创建数据库连接池
+	 */
 	private static ConnectionManager instance;
 	private static ComboPooledDataSource dataSource;
 	
@@ -24,13 +26,12 @@ public final class ConnectionManager {
 			throw new RuntimeException("Object has been instanced!!!");
 		}
 	}
-	public static final ConnectionManager getInstance() {
+	public static ConnectionManager getInstance() {
 		if(instance==null) {
 			synchronized (ConnectionManager.class) {
 				try {
 					instance=new ConnectionManager();
 				}catch (Exception e) {
-					// TODO: handle exception
 					e.printStackTrace();
 				}
 			}	

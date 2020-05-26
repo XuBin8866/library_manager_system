@@ -33,6 +33,7 @@ public class BaseDaoImpl implements BaseDao {
 	    * @Title: close  
 		* @Description: TODO(这里用一句话描述这个方法的作用)
 	 */
+	@Override
 	public void close() {
 		// TODO Auto-generated method stub
 		try {

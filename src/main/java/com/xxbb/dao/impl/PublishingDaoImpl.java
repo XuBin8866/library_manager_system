@@ -25,7 +25,6 @@ public class PublishingDaoImpl extends BaseDaoImpl implements PublishingDao{
 	 */
 	@Override
 	public List<PublishingForm> query(PublishingForm pf) {
-		// TODO Auto-generated method stub
 		StringBuffer sb=new StringBuffer();
 		PublishingForm p=null;
 		List<PublishingForm> pfs=new ArrayList<PublishingForm>();
